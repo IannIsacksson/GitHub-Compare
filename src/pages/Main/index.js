@@ -40,10 +40,8 @@ export default class Main extends Component {
     }
   };
 
-  saveToStorage = () => {
-    const { repositories } = this.state;
-
-    localStorage.setItem('repositorySave', JSON.stringify(repositories));
+  saveToStorage = (updatedRepositories) => {
+    localStorage.setItem('repositorySave', JSON.stringify(updatedRepositories));
   };
 
   handleDeleteRepository = async (id) => {
@@ -53,7 +51,7 @@ export default class Main extends Component {
 
     this.setState({ repositories: updatedRepositories });
 
-    this.saveToStorage();
+    this.saveToStorage(updatedRepositories);
   };
 
   handleUpdateRepository = async (id) => {
