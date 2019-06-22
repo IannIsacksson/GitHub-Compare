@@ -21,13 +21,14 @@ export default class Main extends Component {
     this.setState({ loading: true });
 
     try {
-      const { data: repository } = await api.get(`/repos/${this.state.repositoryInput}`);
+      const { repositories, repositoryInput } = this.state;
+      const { data: repository } = await api.get(`/repos/${repositoryInput}`);
 
       repository.lastCommit = moment(repository.pushed_at).fromNow();
 
       this.setState({
         repositoryInput: '',
-        repositories: [...this.state.repositories, repository],
+        repositories: [...repositories, repository],
         repositoryError: false,
       });
 
@@ -40,20 +41,18 @@ export default class Main extends Component {
   };
 
   saveToStorage = () => {
-    localStorage.setItem('repositorySave', JSON.stringify(this.state.repositories));
+    const { repositories } = this.state;
+
+    localStorage.setItem('repositorySave', JSON.stringify(repositories));
   };
 
-  deleteRepository = (e) => {
-    const result = this.state.repositories.filter(i => i.id === parseInt(e.target.id));
+  handleDeleteRepository = async (id) => {
+    const { repositories } = this.state;
 
-    for (const elemento of result) {
-      const index = this.state.repositories.indexOf(elemento);
-      this.state.repositories.splice(index, 1);
-    }
+    const updatedRepositories = repositories.filter(repository => repository.id !== id);
 
-    this.setState({
-      repositories: this.state.repositories,
-    });
+    this.setState({ repositories: updatedRepositories });
+
     this.saveToStorage();
   };
 
@@ -80,25 +79,26 @@ export default class Main extends Component {
   };
 
   render() {
+    const {
+      repositories, repositoryError, repositoryInput, loading,
+    } = this.state;
     return (
       <Container>
         <img src={logo} alt="Github Compare" />
 
-        <Form withError={this.state.repositoryError} onSubmit={this.handleAddRepository}>
+        <Form withError={repositoryError} onSubmit={this.handleAddRepository}>
           <input
             type="text"
             placeholder="usuário/repositório"
-            value={this.state.repositoryInput}
+            value={repositoryInput}
             onChange={e => this.setState({ repositoryInput: e.target.value })}
           />
-          <button type="submit">
-            {this.state.loading ? <i className="fa fa-spinner fa-pulse" /> : 'Ok'}
-          </button>
+          <button type="submit">{loading ? <i className="fa fa-spinner fa-pulse" /> : 'Ok'}</button>
         </Form>
         <CompareList
-          repositories={this.state.repositories}
-          deleteRepository={this.deleteRepository}
-          handleUpdateRepository={this.handleUpdateRepository}
+          repositories={repositories}
+          deleteRepository={this.handleDeleteRepository}
+          updateRepository={this.handleUpdateRepository}
         />
       </Container>
     );
