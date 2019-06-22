@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import 'font-awesome/css/font-awesome.css';
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -22,9 +24,12 @@ export const Form = styled.form`
     font-size: 18px;
     color: #444;
     border-radius: 3px;
+
+    border: ${props => (props.withError ? '2px solid #F00' : 0)};
   }
 
   button {
+    width: 80px;
     height: 55px;
     padding: 0 20px;
     margin-left: 10px;

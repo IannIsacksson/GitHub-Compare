@@ -22,6 +22,15 @@ export const Repository = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    i {
+      color: #999;
+      cursor: pointer;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+    }
 
     img {
       width: 64px;
@@ -55,6 +64,27 @@ export const Repository = styled.div`
       &:nth-child(2n - 1) {
         background: #f5f5f5;
       }
+    }
+  }
+
+  footer {
+    background: #63f5b0;
+    display: flex;
+    justify-content: center;
+    border-radius: 0 0 3px 3px;
+    &:hover {
+      background: #52d89f;
+      transition: 0.2s;
+    }
+    button {
+      width: 100%;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      background: none;
+      color: #fff;
+      padding: 10px;
+      cursor: pointer;
     }
   }
 `;
