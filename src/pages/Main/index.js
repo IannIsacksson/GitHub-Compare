@@ -12,8 +12,14 @@ export default class Main extends Component {
     loading: false,
     repositoryError: false,
     repositoryInput: '',
-    repositories: JSON.parse(localStorage.getItem('repositorySave')) || [],
+    repositories: [],
   };
+
+  async componentDidMount() {
+    this.setState({ loading: true });
+
+    this.setState({ loading: false, repositories: await this.getLocalRepositories() });
+  }
 
   handleAddRepository = async (e) => {
     e.preventDefault();
@@ -32,7 +38,12 @@ export default class Main extends Component {
         repositoryError: false,
       });
 
-      this.saveToStorage();
+      const localRepositories = await this.getLocalRepositories();
+
+      await localStorage.setItem(
+        '@GitCompare:repositories',
+        JSON.stringify([...localRepositories, repository]),
+      );
     } catch (err) {
       this.setState({ repositoryError: true });
     } finally {
@@ -40,9 +51,7 @@ export default class Main extends Component {
     }
   };
 
-  saveToStorage = (updatedRepositories) => {
-    localStorage.setItem('repositorySave', JSON.stringify(updatedRepositories));
-  };
+  getLocalRepositories = async () => JSON.parse(await localStorage.getItem('@GitCompare:repositories')) || [];
 
   handleDeleteRepository = async (id) => {
     const { repositories } = this.state;
@@ -51,7 +60,7 @@ export default class Main extends Component {
 
     this.setState({ repositories: updatedRepositories });
 
-    this.saveToStorage(updatedRepositories);
+    await localStorage.setItem('@GitCompare:repositories', JSON.stringify(updatedRepositories));
   };
 
   handleUpdateRepository = async (id) => {
@@ -70,7 +79,7 @@ export default class Main extends Component {
         repositories: repositories.map(repo => (repo.id === data.id ? data : repo)),
       });
 
-      this.saveToStorage();
+      await localStorage.setItem('@GitCompare:repositories', JSON.stringify(repositories));
     } catch {
       this.setState({ repositoryError: true });
     }
